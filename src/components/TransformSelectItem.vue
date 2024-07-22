@@ -25,7 +25,7 @@ const selectClass = props.selected === props.id ? 'selected' : ''
 </script>
 
 <template>
-  <li><a class="dropdown-item" :class=selectClass href="#">{{ title }}</a></li>
+  <a class="dropdown-item" :class=selectClass href="#">{{ title }}</a>
 </template>
 
 <style scoped>
