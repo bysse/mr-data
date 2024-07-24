@@ -5,7 +5,7 @@ import { ref } from 'vue'
 const props = defineProps({
   id: {
     type: String,
-    reuired: true
+    required: true
   },
   title: {
     type: String,
@@ -17,15 +17,19 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['changed'])
+const emit = defineEmits(['onSelect'])
+const selectClass = props.selected ? 'selected' : ''
 
-
-const selectClass = props.selected === props.id ? 'selected' : ''
+function emitEvent() {
+  if (!props.selected) {
+    emit('onSelect', props.id);
+  }
+}
 
 </script>
 
 <template>
-  <a class="dropdown-item" :class=selectClass href="#">{{ title }}</a>
+  <a class="dropdown-item" :class=selectClass href="#" @click.prevent="emitEvent">{{ title }}</a>
 </template>
 
 <style scoped>

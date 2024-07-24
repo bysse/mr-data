@@ -1,9 +1,10 @@
 <script setup>
-import Step from '@/components/Step.vue'
 import { ref, watch } from 'vue'
 import transformManager from '@/transform/manager.js'
+import TransformSelect from '@/components/TransformSelect.vue'
 
-const inputData = ref('{\n   "key": "value"\n}');
+const inputData = ref('{"key":"value"}');
+const transformId = ref('');
 
 function detectInputDataFormat(value) {
   console.log('inputData changed:', value);
@@ -16,9 +17,12 @@ function detectInputDataFormat(value) {
   console.log('scores:', scores);
 
   if (scores.length > 0) {
-    const transform = transformManager.get(scores[0]);
-    const data = transform.apply(array);
-    console.log(data);
+    transformId.value = scores[0].id;
+    //const transform = transformManager.get(scores[0]);
+    //const data = transform.apply(array);
+    //console.log(data);
+  } else {
+    transformId.value = '';
   }
 
 }
@@ -41,7 +45,10 @@ detectInputDataFormat(inputData.value);
           <textarea id="input-data" class="form-control" v-model="inputData"></textarea>
         </div>
 
-        <Step transform="base64 encode" :error=false />
+        <div class="hstack">
+          <TransformSelect :selected="transformId" />
+          <button type="button" class="btn btn-primary">Apply</button>
+        </div>
 
       </div>
     </div>
@@ -50,4 +57,11 @@ detectInputDataFormat(inputData.value);
 </template>
 
 <style scoped>
+
+#input-data {
+  font-family: monospace;
+  font-size: 1rem;
+  height: 200px;
+}
+
 </style>
