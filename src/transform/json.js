@@ -17,9 +17,14 @@ export default class JsonFormatTransform extends Transform {
 
     apply(buffer) {
         const decoder = new TextDecoder();
-        const string = decoder.decode(buffer);
+        const encoder = new TextEncoder();
 
-        const obj = JSON.parse(string);
-        return JSON.stringify(obj, null, 3)
+        const decodedString = decoder.decode(buffer);
+
+        let obj = JSON.parse(decodedString);
+        let json = JSON.stringify(obj, null, 3);
+        let data =  encoder.encode(json);
+
+        return new Uint8ClampedArray(data);
     }
 }
