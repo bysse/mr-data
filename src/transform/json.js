@@ -16,14 +16,11 @@ export default class JsonFormatTransform extends Transform {
     }
 
     apply(buffer) {
-        const decoder = new TextDecoder();
-        const encoder = new TextEncoder();
-
-        const decodedString = decoder.decode(buffer);
+        const decodedString = this.decode(buffer);
 
         let obj = JSON.parse(decodedString);
         let json = JSON.stringify(obj, null, 3);
-        let data =  encoder.encode(json);
+        let data = this.encode(json);
 
         return new Uint8ClampedArray(data);
     }

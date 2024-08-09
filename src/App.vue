@@ -6,6 +6,7 @@ const inputData = ref('{"key":"value"}');
 const transformId = ref('');
 const suggestions = ref([]);
 const transformChain = ref([]);
+const transformChainError = ref('');
 const outputData = ref('');
 
 function detectInputDataFormat(value) {
@@ -39,10 +40,18 @@ function applyTransformChain() {
   let data = new Uint8ClampedArray(encodedData);
 
   for (let i = 0; i < transformChain.value.length; i++) {
-    data = transformChain.value[i].apply(data);
+    try {
+      data = transformChain.value[i].apply(data);
+    } catch (e) {
+      console.error('Error applying transform:', e);
+      outputData.value = '';
+      transformChainError.value = e;
+      return;
+    }
   }
   let output = decoder.decode(data);
   console.log('applyTransformChain:', output);
+  transformChainError.value = '';
   outputData.value = output;
 }
 
@@ -83,7 +92,7 @@ detectInputDataFormat(inputData.value);
     </div>
 
     <div class="d-flex flex-column align-items-stretch flex-grow-0 bg-white">
-      <textarea class="flex-row flex-fill form-control" id="input-data" cols="100" v-model="inputData"></textarea>
+      <textarea class="flex-row flex-fill form-control" id="input-data" cols="100" rows="10" v-model="inputData"></textarea>
       <div class="flex-row">
 
         <span v-for="suggestion in suggestions">
@@ -92,14 +101,15 @@ detectInputDataFormat(inputData.value);
           </a>
         </span>
       </div>
-      <div class="flex-row">
+
+      <div class="flex-row" v-if="transformChainError !== ''">
         <div class="alert alert-danger" role="alert">
-          errors
+          {{ transformChainError }}
         </div>
       </div>
 
       <div class="flex-row">
-        <textarea class="flex-row flex-fill form-control" id="output-data" cols="100" v-model="outputData"></textarea>
+        <textarea class="flex-row flex-fill form-control" id="output-data" cols="100" rows="10" v-model="outputData"></textarea>
       </div>
     </div>
   </main>

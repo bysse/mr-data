@@ -1,9 +1,11 @@
-import JsonFormatTransform from './json';
+import JsonFormatTransform from '@/transform/json.js';
+import Base64Transform from '@/transform/base64.js'
 
 class TransformManager {
     constructor() {
         this.transforms = [
-            new JsonFormatTransform()
+            new JsonFormatTransform(),
+            new Base64Transform()
         ];
     }
 
