@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import transformManager from '@/transform/manager.js'
+import { Buffer, BufferType } from '@/transform/buffer.js'
 
 const inputData = ref('{"key":"value"}');
 const transformId = ref('');
@@ -14,9 +15,9 @@ function detectInputDataFormat(value) {
 
   const encoder = new TextEncoder();
   const uint8Array = encoder.encode(value);
-  const array = new Uint8ClampedArray(uint8Array);
+  const buffer = Buffer.wrap(uint8Array, BufferType.value());
 
-  const scores = transformManager.detect(array);
+  const scores = transformManager.detect(buffer);
   console.log('scores:', scores);
 
   transformId.value = '';
@@ -37,11 +38,11 @@ function applyTransformChain() {
 
   console.log('applyTransformChain:', transformChain.value);
   let encodedData = encoder.encode(inputData.value);
-  let data = new Uint8ClampedArray(encodedData);
+  let buffer = Buffer.wrap(encodedData, BufferType.value());
 
   for (let i = 0; i < transformChain.value.length; i++) {
     try {
-      data = transformChain.value[i].apply(data);
+      buffer = transformChain.value[i].apply(buffer);
     } catch (e) {
       console.error('Error applying transform:', e);
       outputData.value = '';
@@ -49,7 +50,8 @@ function applyTransformChain() {
       return;
     }
   }
-  let output = decoder.decode(data);
+  console.log(buffer);
+  let output = decoder.decode(buffer.data);
   console.log('applyTransformChain:', output);
   transformChainError.value = '';
   outputData.value = output;

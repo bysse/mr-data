@@ -1,4 +1,5 @@
 import Transform from './transform'
+import { Buffer, BufferType, Type } from '@/transform/buffer.js'
 
 export default class Base64Transform extends Transform {
     constructor() {
@@ -7,8 +8,11 @@ export default class Base64Transform extends Transform {
     }
 
     detect(buffer) {
-        let string = this.decode(buffer);
-        return this.regex.test(string) ? 1.0 : 0.0;
+        if (buffer.hasType(Type.VALUE)) {
+            let string = this.decode(buffer);
+            return this.regex.test(string) ? 1.0 : 0.0;
+        }
+        return 0.0;
     }
 
     apply(buffer) {
@@ -17,6 +21,6 @@ export default class Base64Transform extends Transform {
         let obj = atob(decodedString);
         let data = this.encode(obj);
 
-        return new Uint8ClampedArray(data);
+        return Buffer.wrap(data, BufferType.value());
     }
 }

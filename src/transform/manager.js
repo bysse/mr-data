@@ -1,11 +1,17 @@
 import JsonFormatTransform from '@/transform/json.js';
 import Base64Transform from '@/transform/base64.js'
+import JWTDecodeTransform from '@/transform/jwt.js'
+import { ArrayLengthTransform } from '@/transform/array.js'
 
 class TransformManager {
     constructor() {
         this.transforms = [
             new JsonFormatTransform(),
-            new Base64Transform()
+            new Base64Transform(),
+
+            new JWTDecodeTransform(),
+
+            new ArrayLengthTransform()
         ];
     }
 
@@ -35,6 +41,7 @@ class TransformManager {
         return result.map(entry => entry[0]);
     }
 }
+
 const transformManager = new TransformManager();
 
 export default transformManager;
