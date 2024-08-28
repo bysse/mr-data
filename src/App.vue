@@ -1,129 +1,103 @@
 <script setup>
 import { ref, watch } from 'vue'
 import transformManager from '@/transform/manager.js'
-import { Buffer, BufferType } from '@/transform/buffer.js'
+import { TransformChain } from '@/transform/transform_chain.js'
+import { Codemirror } from 'vue-codemirror'
 
 const inputData = ref('{"key":"value"}');
-const transformId = ref('');
-const suggestions = ref([]);
-const transformChain = ref([]);
-const transformChainError = ref('');
 const outputData = ref('');
+const outputBuffer = ref(null);
 
-function detectInputDataFormat(value) {
-  console.log('inputData changed:', value);
+const suggestions = ref([]);
+const transformChain = new TransformChain();
+const transformChainError = ref('');
 
-  const encoder = new TextEncoder();
-  const uint8Array = encoder.encode(value);
-  const buffer = Buffer.wrap(uint8Array, BufferType.value());
-
-  const scores = transformManager.detect(buffer);
-  console.log('scores:', scores);
-
-  transformId.value = '';
-
-  if (scores.length > 0) {
-    let suggestionList = [];
-    for (let i = 0; i < scores.length; i++) {
-      suggestionList.push(transformManager.get(scores[i]));
-    }
-    suggestions.value = suggestionList;
-    console.log(suggestionList);
-  }
-}
+const decoder = new TextDecoder();
 
 function applyTransformChain() {
-  const decoder = new TextDecoder();
-  const encoder = new TextEncoder();
+  const result = transformChain.apply(inputData.value);
 
-  console.log('applyTransformChain:', transformChain.value);
-  let encodedData = encoder.encode(inputData.value);
-  let buffer = Buffer.wrap(encodedData, BufferType.value());
-
-  for (let i = 0; i < transformChain.value.length; i++) {
-    try {
-      buffer = transformChain.value[i].apply(buffer);
-    } catch (e) {
-      console.error('Error applying transform:', e);
-      outputData.value = '';
-      transformChainError.value = e;
-      return;
-    }
+  if (result.error) {
+    transformChainError.value = result.error;
+    outputData.value = '';
+    outputBuffer.value = null;
+    return;
   }
-  console.log(buffer);
-  let output = decoder.decode(buffer.data);
-  console.log('applyTransformChain:', output);
+
+  outputData.value = decoder.decode(result.buffer.data);
   transformChainError.value = '';
-  outputData.value = output;
+
+  // update the suggestions
+  let suggestionList = [];
+  for (let i = 0; i < result.suggestions.length; i++) {
+    suggestionList.push(transformManager.get(result.suggestions[i]));
+  }
+  suggestions.value = suggestionList;
+  console.log(suggestionList);
 }
 
-function applyTransform(transform) {
-  console.log('applyTransform:', transform);
-  transformChain.value.push(transform);
-
+function appendTransform(transform) {
   suggestions.value = [];
+  transformChain.append(transform);
   applyTransformChain();
 }
 
-watch(inputData, (value) => {
-  applyTransformChain();
-  detectInputDataFormat(value);
-});
+const code = ref('{"key":"value"}');
 
-detectInputDataFormat(inputData.value);
 
 </script>
 
 <template>
-  <main class="d-flex">
-    <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style="max-width: 300px;">
-      <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-dark text-decoration-none border-bottom">
-        <svg class="bi me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
-        <span class="fs-5 fw-semibold">Transforms</span>
-      </a>
+  <main>
+    <div class="container">
+      <div class="section">
+        <h2>Encoded</h2>
 
-      <div class="list-group list-group-flush border-bottom scrollarea" v-for="transform in transformChain">
-        <a href="#" class="list-group-item list-group-item-action active py-3 lh-tight">
-          <div class="d-flex w-100 align-items-center justify-content-between">
-            <strong class="mb-1">{{ transform.title }}</strong>
-            <small>Wed</small>
-          </div>
-          <div class="col-10 mb-1 small">Some placeholder content in a paragraph below the heading and date.</div>
-        </a>
+        <codemirror
+          v-model="code"
+          placeholder="Encoded data goes here..."
+          options
+          :style="{ width: '600px',height: '300px' }"
+          :autofocus="true"
+          :indent-with-tab="true"
+          :tab-size="2"
+          />
+      </div>
+
+      <div class="section">
+        <h2>Transform</h2>
+      </div>
+
+      <div class="section">
+        <h2>Decoded</h2>
+
+        <codemirror
+          v-model="code"
+          options
+          :style="{ width: '600px', height: '300px' }"
+          :autofocus="false"
+          :indent-with-tab="true"
+          :tab-size="2"
+        />
       </div>
     </div>
 
-    <div class="d-flex flex-column align-items-stretch flex-grow-0 bg-white">
-      <textarea class="flex-row flex-fill form-control" id="input-data" cols="100" rows="10" v-model="inputData"></textarea>
-      <div class="flex-row">
-
-        <span v-for="suggestion in suggestions">
-          <a href="#" @click.prevent="applyTransform(suggestion)">
-            <span class="badge bg-success">{{ suggestion.title }}</span>
-          </a>
-        </span>
-      </div>
-
-      <div class="flex-row" v-if="transformChainError !== ''">
-        <div class="alert alert-danger" role="alert">
-          {{ transformChainError }}
-        </div>
-      </div>
-
-      <div class="flex-row">
-        <textarea class="flex-row flex-fill form-control" id="output-data" cols="100" rows="10" v-model="outputData"></textarea>
-      </div>
-    </div>
   </main>
 
 </template>
 
 <style scoped>
 
-#input-data {
-  font-family: monospace;
-  font-size: 1rem;
-  width: 100%;
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.section {
+  margin: 0.5em;
+  padding: 0.5em;
+  border: 1px solid #ccc;
 }
 
 </style>
