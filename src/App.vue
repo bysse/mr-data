@@ -42,8 +42,11 @@ function appendTransform(transform) {
   applyTransformChain();
 }
 
-const code = ref('{"key":"value"}');
+function inputDataChanged() {
+  applyTransformChain();
+}
 
+applyTransformChain();
 
 </script>
 
@@ -54,13 +57,14 @@ const code = ref('{"key":"value"}');
         <h2>Encoded</h2>
 
         <codemirror
-          v-model="code"
+          v-model="inputData"
           placeholder="Encoded data goes here..."
           options
           :style="{ width: '600px',height: '300px' }"
           :autofocus="true"
           :indent-with-tab="true"
           :tab-size="2"
+          @on-change="inputDataChanged"
           />
       </div>
 
@@ -72,7 +76,7 @@ const code = ref('{"key":"value"}');
         <h2>Decoded</h2>
 
         <codemirror
-          v-model="code"
+          v-model="outputData"
           options
           :style="{ width: '600px', height: '300px' }"
           :autofocus="false"
