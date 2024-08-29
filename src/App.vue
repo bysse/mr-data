@@ -8,16 +8,21 @@ const inputData = ref('{"key":"value"}');
 const outputData = ref('');
 const outputBuffer = ref(null);
 
+const transforms = ref([]);
 const suggestions = ref([]);
+
 const transformChain = new TransformChain();
 const transformChainError = ref('');
 
 const decoder = new TextDecoder();
 
 function applyTransformChain() {
+  console.log(inputData.value);
   const result = transformChain.apply(inputData.value);
+  console.log(result);
 
   if (result.error) {
+    console.log("Error: " + result.error);
     transformChainError.value = result.error;
     outputData.value = '';
     outputBuffer.value = null;
@@ -37,9 +42,18 @@ function applyTransformChain() {
 }
 
 function appendTransform(transform) {
-  suggestions.value = [];
   transformChain.append(transform);
+  suggestions.value = [];
+  transforms.value = transformChain.transforms;
   applyTransformChain();
+}
+
+function removeTransform(index) {
+  console.log("Removing transform at index: " + index);
+  transformChain.removeByIndex(index);
+  transforms.value = [];
+  transforms.value = transformChain.transforms;
+  console.log(transformChain.transforms);
 }
 
 function inputDataChanged() {
@@ -69,7 +83,20 @@ applyTransformChain();
       </div>
 
       <div class="section">
-        <h2>Transform</h2>
+        <h2>Transforms</h2>
+        <ul>
+          <li v-for="(transform, index) in transforms" @click="removeTransform(index)">
+            {{ transform.title }}
+          </li>
+        </ul>
+        <div v-if="suggestions.length > 0">
+          <h3>Suggestions</h3>
+          <ul>
+            <li v-for="suggestion in suggestions" @click="appendTransform(suggestion)">
+              {{ suggestion.title }}
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="section">

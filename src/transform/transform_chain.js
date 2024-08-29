@@ -36,21 +36,22 @@ export class TransformChain {
         this.transforms.push(transform);
     }
 
-    remove(index) {
+    removeByIndex(index) {
         this.transforms.splice(index, 1);
     }
 
     apply(value) {
-        if (this.transforms.length === 0) {
-            const buffer = Buffer.wrap(value, BufferType.value());
-            return TransformChainResult.success(
-              buffer, transformManager.detect(buffer)
-            );
-        }
+        console.log('TransformChain.apply');
 
         const encoder = new TextEncoder();
         const encodedData = encoder.encode(value);
         let buffer = Buffer.wrap(encodedData, BufferType.value());
+
+        if (this.transforms.length === 0) {
+            return TransformChainResult.success(
+              buffer, transformManager.detect(buffer)
+            );
+        }
 
         for (let i = 0; i < this.transforms.length; i++) {
             try {

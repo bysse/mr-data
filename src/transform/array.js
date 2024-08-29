@@ -7,7 +7,6 @@ export class ArrayLengthTransform extends Transform {
     }
 
     detect(buffer) {
-        console.log(buffer);
         if (buffer.type.isArray) {
             return 1.0;
         }

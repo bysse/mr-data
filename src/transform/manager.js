@@ -32,6 +32,7 @@ class TransformManager {
         for (let i = 0; i < this.transforms.length; i++) {
             const transform = this.transforms[i];
             const score = transform.detect(data);
+            console.log(transform.id, score);
             if (score <= 0) continue;
 
             result.push([transform.id, score]);
