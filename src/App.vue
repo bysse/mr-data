@@ -41,10 +41,27 @@ function applyTransformChain() {
   console.log(suggestionList);
 }
 
+function updateQueryString() {
+  if (transformChain.transforms.length === 0) {
+    window.history.pushState({}, '', '');
+    return;
+  }
+
+  let query = 'chain=';
+  for (let i = 0; i < transformChain.transforms.length; i++) {
+    query += transformChain.transforms[i].id + '|';
+  }
+  query = query.slice(0, -1);
+
+  window.history.pushState({}, '', '?' + query);
+}
+
 function appendTransform(transform) {
   transformChain.append(transform);
   suggestions.value = [];
   transforms.value = transformChain.transforms;
+
+  updateQueryString();
   applyTransformChain();
 }
 
@@ -53,7 +70,8 @@ function removeTransform(index) {
   transformChain.removeByIndex(index);
   transforms.value = [];
   transforms.value = transformChain.transforms;
-  console.log(transformChain.transforms);
+
+  updateQueryString();
 }
 
 function inputDataChanged() {
