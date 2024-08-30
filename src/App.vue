@@ -78,6 +78,20 @@ function inputDataChanged() {
   applyTransformChain();
 }
 
+// read the query string
+const urlParams = new URLSearchParams(window.location.search);
+const chain = urlParams.get('chain');
+if (chain) {
+  const transformIds = chain.split('|');
+  for (let i = 0; i < transformIds.length; i++) {
+    const transform = transformManager.get(transformIds[i]);
+    if (transform) {
+      transformChain.append(transform);
+    }
+  }
+  transforms.value = transformChain.transforms;
+}
+
 applyTransformChain();
 
 </script>
