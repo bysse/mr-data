@@ -32,11 +32,14 @@ jobs:
       - name: Run build script
         run: npm run build
 
-      - name: Commit build output
-        run: |          
+      - name: Prepare output
+        run: |
           git switch web
           rsync -Ar dist/ docs/
           git add docs/
+
+      - name: Commit build output
+        run: |          
           git commit -m "Automated build commit"
           git push --force
         env:
