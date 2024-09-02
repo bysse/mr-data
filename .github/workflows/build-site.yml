@@ -9,10 +9,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
 
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v3
+
+      - name: Configure git
+        run: |
+          git config --local user.name "build-bot"
+          git config --local user.email "build-bot@users.noreply.github.com"
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -26,11 +33,10 @@ jobs:
         run: npm run build
 
       - name: Commit build output
-        run: |
-          git config --local user.name "build-bot"
-          git config --local user.email "build-bot@users.noreply.github.com"
+        run: |          
           git switch web
-          git add docs
+          rsync -Ar dist/ docs/
+          git add docs/
           git commit -m "Automated build commit"
           git push --force
         env:
