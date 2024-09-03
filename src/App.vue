@@ -2,9 +2,10 @@
 import { ref, watch } from 'vue'
 import transformManager from '@/transform/manager.js'
 import { TransformChain } from '@/transform/transform_chain.js'
-import { Codemirror } from 'vue-codemirror'
+import TextEdit from '@/components/TextEdit.vue'
 
-const inputData = ref('{"key":"value"}');
+//const inputData = ref('{"key":"value"}');
+const inputData = ref('aGVsbG8=');
 const outputData = ref('');
 const outputBuffer = ref(null);
 
@@ -72,9 +73,11 @@ function removeTransform(index) {
   transforms.value = transformChain.transforms;
 
   updateQueryString();
+  applyTransformChain();
 }
 
 function inputDataChanged() {
+  console.log("CHANGED");
   applyTransformChain();
 }
 
@@ -102,14 +105,8 @@ applyTransformChain();
       <div class="section">
         <h2>Encoded</h2>
 
-        <codemirror
+        <TextEdit
           v-model="inputData"
-          placeholder="Encoded data goes here..."
-          options
-          :style="{ width: '600px',height: '300px' }"
-          :autofocus="true"
-          :indent-with-tab="true"
-          :tab-size="2"
           @on-change="inputDataChanged"
           />
       </div>
@@ -134,12 +131,8 @@ applyTransformChain();
       <div class="section">
         <h2>Decoded</h2>
 
-        <codemirror
+        <TextEdit
           v-model="outputData"
-          options
-          :style="{ width: '600px', height: '300px' }"
-          :autofocus="false"
-          :indent-with-tab="true"
           :tab-size="2"
         />
       </div>
@@ -161,6 +154,7 @@ applyTransformChain();
   margin: 0.5em;
   padding: 0.5em;
   border: 1px solid #ccc;
+  min-width: 250px;
 }
 
 </style>

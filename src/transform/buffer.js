@@ -43,10 +43,14 @@ export class Buffer {
       throw new Error('type must be an instance of BufferType')
     }
 
-    if (data instanceof Uint8ClampedArray) {
-      return new Buffer(data, type)
+    if (type === BufferType.json()) {
+      if (data instanceof Uint8ClampedArray) {
+        return new Buffer(data, type)
+      }
+      return new Buffer(new Uint8ClampedArray(data), type)
     }
-    return new Buffer(new Uint8ClampedArray(data), type)
+
+    return new Buffer(data, type);
   }
 
   at(index) {

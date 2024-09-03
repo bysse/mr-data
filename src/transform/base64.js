@@ -10,7 +10,8 @@ export default class Base64Transform extends Transform {
     detect(buffer) {
         if (buffer.hasType(Type.VALUE)) {
             let string = this.decode(buffer);
-            return this.regex.test(string) ? 1.0 : 0.0;
+            console.log(string)
+            return this.regex.test(string.trim()) ? 1.0 : 0.0;
         }
         return 0.0;
     }

@@ -14,6 +14,6 @@ export class ArrayLengthTransform extends Transform {
     }
 
     apply(buffer) {
-        return Buffer.wrap(buffer.data.length, BufferType.value());
+        return Buffer.wrap("" + buffer.data.length, BufferType.value());
     }
 }
