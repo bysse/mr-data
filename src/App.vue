@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import transformManager from './transform/manager'
-import { TransformChain } from './transform/transform_chain.js'
+import { TransformChain } from './transform/transform_chain'
 import TextEdit from './components/TextEdit.vue'
 
 //const inputData = ref('{"key":"value"}');
