@@ -1,5 +1,5 @@
-import Transform from './transform'
-import { Buffer, BufferType, Type } from '@/transform/buffer.js'
+import Transform from './transform.js'
+import { Buffer, BufferType, Type } from '@/transform/buffer.ts'
 
 export default class Base64Transform extends Transform {
     constructor() {

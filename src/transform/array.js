@@ -1,5 +1,5 @@
-import Transform from './transform'
-import { Buffer, BufferType } from '@/transform/buffer.js'
+import Transform from './transform.js'
+import { Buffer, BufferType } from '@/transform/buffer.ts'
 
 export class ArrayLengthTransform extends Transform {
     constructor() {

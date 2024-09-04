@@ -1,5 +1,5 @@
-import { Buffer, BufferType } from '@/transform/buffer.js'
-import transformManager from '@/transform/manager.js'
+import { Buffer, BufferType } from '@/transform/buffer.ts'
+import transformManager from '@/transform/manager.ts'
 
 export class TransformChainResult {
     constructor(error, index, message, buffer, suggestions) {

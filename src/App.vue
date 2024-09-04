@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import transformManager from '@/transform/manager.js'
-import { TransformChain } from '@/transform/transform_chain.js'
-import TextEdit from '@/components/TextEdit.vue'
+import transformManager from './transform/manager'
+import { TransformChain } from './transform/transform_chain.js'
+import TextEdit from './components/TextEdit.vue'
 
 //const inputData = ref('{"key":"value"}');
 const inputData = ref('aGVsbG8=');

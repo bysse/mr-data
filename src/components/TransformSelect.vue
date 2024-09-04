@@ -2,7 +2,7 @@
 
 import { ref, watch } from 'vue'
 import TransformSelectItem from '@/components/TransformSelectItem.vue'
-import transformManager from '@/transform/manager.js'
+import transformManager from '@/transform/manager.ts'
 
 const props = defineProps({
   selected: {
