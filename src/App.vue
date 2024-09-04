@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue'
 import transformManager from '@/transform/manager.js'
 import { TransformChain } from '@/transform/transform_chain.js'
