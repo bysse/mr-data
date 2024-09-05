@@ -1,4 +1,4 @@
-import { Buffer, BufferType } from '@/transform/buffer.ts'
+import { Buffer } from '@/transform/buffer.ts'
 import transformManager from '@/transform/manager.ts'
 import { Transform } from './transform'
 
@@ -64,9 +64,7 @@ export class TransformChain {
   apply(value: string): TransformChainResult {
     console.log('TransformChain.apply')
 
-    const encoder = new TextEncoder()
-    const encodedData = encoder.encode(value)
-    let buffer = Buffer.wrap(encodedData, BufferType.value())
+    let buffer = Buffer.fromValue(value);
 
     if (this.transforms.length === 0) {
       return TransformChainResult.success(

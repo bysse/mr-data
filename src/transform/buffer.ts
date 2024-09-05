@@ -1,5 +1,3 @@
-import { Value } from 'sass'
-
 export enum ValueType {
   VALUE,
   JSON
@@ -14,23 +12,27 @@ export class BufferType {
     this.isArray = isArray
   }
 
-  matches(type: ValueType, isArray: boolean = false) {
-    return this.valueType == type && this.isArray == isArray
+  matches(bufferType: BufferType) {
+    return this.valueType == bufferType.type && this.isArray == bufferType.isArray
   }
 
-  static array() {
-    return new BufferType(ValueType.VALUE, true)
+  matchesAny(types: BufferType[]) {
+    return types.some(type => this.matches(type))
   }
 
   static value(): BufferType {
     return new BufferType(ValueType.VALUE)
   }
 
+  static valueArray() {
+    return new BufferType(ValueType.VALUE, true)
+  }
+
   static json(): BufferType {
     return new BufferType(ValueType.JSON)
   }
 
-  static json_array() {
+  static jsonArray() {
     return new BufferType(ValueType.JSON, true)
   }
 }
@@ -44,15 +46,37 @@ export class Buffer<T> {
     this.type = type
   }
 
-  static wrap(data: Uint8ClampedArray, type: BufferType) {
-    return new Buffer(data, type)
-  }
-
-  hasType(type) {
+  hasType(type: ValueType): boolean {
     return this.type.matches(type, false)
   }
 
-  hasArrayType(type) {
+  hasArrayType(type: ValueType): boolean {
     return this.type.matches(type, true)
+  }
+
+  private static readonly _encoder = new TextEncoder()
+
+  static fromValue(data: string): Buffer<Uint8ClampedArray> {
+    return Buffer.wrap(
+      Buffer._encoder.encode(data),
+      BufferType.value()
+    )
+  }
+
+  static fromValueArray(data: string[]): Buffer<any> {
+    let arrays = data.map((item) => Buffer._encoder.encode(item))
+    return Buffer.wrap(arrays, BufferType.valueArray())
+  }
+
+  static fromJson(json: string): Buffer<string> {
+    return Buffer.wrap(json, BufferType.json())
+  }
+
+  static fromJsonArray(json: string[]): Buffer<string> {
+    return Buffer.wrap(json, BufferType.jsonArray())
+  }
+
+  static wrap(data: Uint8ClampedArray, type: BufferType) {
+    return new Buffer(data, type)
   }
 }

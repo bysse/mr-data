@@ -1,7 +1,4 @@
-import JsonFormatTransform from '@/transform/json.js'
-import Base64Transform from '@/transform/base64.js'
-import JWTDecodeTransform from '@/transform/jwt.js'
-import { ArrayLengthTransform } from '@/transform/array.js'
+import { JsonFormatTransform } from './json.ts'
 import { Transform } from './transform'
 import { Buffer } from './buffer'
 
@@ -10,12 +7,14 @@ export class TransformManager {
 
   constructor() {
     this.transforms = [
-      new JsonFormatTransform(),
+      new JsonFormatTransform()
+      /*
       new Base64Transform(),
 
       new JWTDecodeTransform(),
 
       new ArrayLengthTransform()
+       */
     ]
   }
 
@@ -35,6 +34,10 @@ export class TransformManager {
     const result = []
     for (let i = 0; i < this.transforms.length; i++) {
       const transform = this.transforms[i]
+      if (!buffer.type.matchesAny(transform.inputType)) {
+        continue
+      }
+
       const score = transform.detect(buffer)
       if (score <= 0) continue
       result.push([transform.id, score])
