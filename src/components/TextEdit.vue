@@ -1,24 +1,16 @@
-<script setup>
-
+<script setup lang="ts">
 const model = defineModel({ required: true })
 
-function autoResize(event) {
+function autoResize(event: any) {
   const textarea = event.target
   textarea.style.height = 'auto'
   textarea.style.height = `${textarea.scrollHeight}px`
 }
-
 </script>
 
 <template>
   <div class="text-edit-container">
-    <textarea
-      class="text-edit"
-      rows="1"
-      @input="autoResize"
-      @change="autoResize"
-      v-model="model"
-    />
+    <textarea class="text-edit" rows="1" @input="autoResize" @change="autoResize" v-model="model" />
   </div>
 </template>
 

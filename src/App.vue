@@ -3,100 +3,101 @@ import { ref, watch } from 'vue'
 import transformManager from './transform/manager'
 import { TransformChain } from './transform/transform_chain'
 import TextEdit from './components/TextEdit.vue'
+import QueryString from './query'
 
 //const inputData = ref('{"key":"value"}');
-const inputData = ref('aGVsbG8=');
-const outputData = ref('');
-const outputBuffer = ref(null);
+const inputData = ref('aGVsbG8=')
+const outputData = ref('')
+const outputBuffer = ref(null)
 
-const transforms = ref([]);
-const suggestions = ref([]);
+const transforms = ref([])
+const suggestions = ref([])
 
-const transformChain = new TransformChain();
-const transformChainError = ref('');
+const transformChain = new TransformChain()
+const transformChainError = ref('')
 
-const decoder = new TextDecoder();
+const queryString = new QueryString()
+
+const decoder = new TextDecoder()
 
 function applyTransformChain() {
-  console.log(inputData.value);
-  const result = transformChain.apply(inputData.value);
-  console.log(result);
+  console.log(inputData.value)
+  const result = transformChain.apply(inputData.value)
+  console.log(result)
 
   if (result.error) {
-    console.log("Error: " + result.error);
-    transformChainError.value = result.error;
-    outputData.value = '';
-    outputBuffer.value = null;
-    return;
+    console.log('Error: ' + result.error)
+    transformChainError.value = result.error
+    outputData.value = ''
+    outputBuffer.value = null
+    return
   }
 
-  outputData.value = decoder.decode(result.buffer.data);
-  transformChainError.value = '';
+  outputData.value = decoder.decode(result.buffer.data)
+  transformChainError.value = ''
 
   // update the suggestions
-  let suggestionList = [];
+  let suggestionList = []
   for (let i = 0; i < result.suggestions.length; i++) {
-    suggestionList.push(transformManager.get(result.suggestions[i]));
+    suggestionList.push(transformManager.get(result.suggestions[i]))
   }
-  suggestions.value = suggestionList;
-  console.log(suggestionList);
+  suggestions.value = suggestionList
+  console.log(suggestionList)
 }
 
 function updateQueryString() {
   if (transformChain.transforms.length === 0) {
-    window.history.pushState({}, '', '');
-    return;
+    queryString.remove('chain')
+  } else {
+    queryString.set(
+      'chain',
+      transformChain
+        .all()
+        .map((transform) => transform.id)
+        .join('|')
+    )
   }
-
-  let query = 'chain=';
-  for (let i = 0; i < transformChain.transforms.length; i++) {
-    query += transformChain.transforms[i].id + '|';
-  }
-  query = query.slice(0, -1);
-
-  window.history.pushState({}, '', '?' + query);
+  queryString.apply()
 }
 
 function appendTransform(transform) {
-  transformChain.append(transform);
-  suggestions.value = [];
-  transforms.value = transformChain.transforms;
+  transformChain.append(transform)
+  suggestions.value = []
+  transforms.value = transformChain.transforms
 
-  updateQueryString();
-  applyTransformChain();
+  updateQueryString()
+  applyTransformChain()
 }
 
 function removeTransform(index) {
-  console.log("Removing transform at index: " + index);
-  transformChain.removeByIndex(index);
-  transforms.value = [];
-  transforms.value = transformChain.transforms;
+  console.log('Removing transform at index: ' + index)
+  transformChain.removeByIndex(index)
+  transforms.value = []
+  transforms.value = transformChain.transforms
 
-  updateQueryString();
-  applyTransformChain();
+  updateQueryString()
+  applyTransformChain()
 }
 
 function inputDataChanged() {
-  console.log("CHANGED");
-  applyTransformChain();
+  console.log('CHANGED')
+  applyTransformChain()
 }
 
 // read the query string
-const urlParams = new URLSearchParams(window.location.search);
-const chain = urlParams.get('chain');
+const chain = queryString.get('chain')
 if (chain) {
-  const transformIds = chain.split('|');
+  const transformIds = chain.split('|')
   for (let i = 0; i < transformIds.length; i++) {
-    const transform = transformManager.get(transformIds[i]);
+    const transform = transformManager.get(transformIds[i])
     if (transform) {
-      transformChain.append(transform);
+      transformChain.append(transform)
     }
   }
-  transforms.value = transformChain.transforms;
+  transforms.value = transformChain.all()
 }
 
-applyTransformChain();
-
+applyTransformChain()
 </script>
 
 <template>
@@ -105,10 +106,7 @@ applyTransformChain();
       <div class="section">
         <h2>Encoded</h2>
 
-        <TextEdit
-          v-model="inputData"
-          @on-change="inputDataChanged"
-          />
+        <TextEdit v-model="inputData" @on-change="inputDataChanged" />
       </div>
 
       <div class="section">
@@ -131,19 +129,13 @@ applyTransformChain();
       <div class="section">
         <h2>Decoded</h2>
 
-        <TextEdit
-          v-model="outputData"
-          :tab-size="2"
-        />
+        <TextEdit v-model="outputData" :tab-size="2" />
       </div>
     </div>
-
   </main>
-
 </template>
 
 <style scoped>
-
 .container {
   display: flex;
   flex-direction: row;
@@ -156,5 +148,4 @@ applyTransformChain();
   border: 1px solid #ccc;
   min-width: 250px;
 }
-
 </style>
