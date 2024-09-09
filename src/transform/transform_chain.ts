@@ -39,6 +39,10 @@ export class TransformChain {
     this.transforms = []
   }
 
+  isEmpty(): boolean {
+    return this.transforms.length === 0
+  }
+
   all(): Transform[] {
     return this.transforms
   }

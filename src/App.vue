@@ -46,7 +46,7 @@ function applyTransformChain() {
 }
 
 function updateQueryString() {
-  if (transformChain.transforms.length === 0) {
+  if (transformChain.isEmpty()) {
     queryString.remove('chain')
   } else {
     queryString.set(

@@ -10,7 +10,13 @@ function autoResize(event: any) {
 
 <template>
   <div class="text-edit-container">
-    <textarea class="text-edit" rows="1" @input="autoResize" @change="autoResize" v-model="model" />
+    <textarea
+      class="text-edit"
+      rows="1"
+      @input="autoResize"
+      @change="autoResize"
+      :v-model="model"
+    />
   </div>
 </template>
 
