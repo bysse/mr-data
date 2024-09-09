@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import transformManager from './transform/manager'
+import { Transform } from './transform/transform'
+import transformManager from './transform/transform_manager'
 import { TransformChain } from './transform/transform_chain'
 import TextEdit from './components/TextEdit.vue'
 import QueryString from './query'
@@ -11,7 +12,7 @@ const outputData = ref('')
 const outputBuffer = ref(null)
 
 const transforms = ref([])
-const suggestions = ref([])
+const suggestions = ref<Transform[]>([])
 
 const transformChain = new TransformChain()
 const transformChainError = ref('')
@@ -27,7 +28,7 @@ function applyTransformChain() {
 
   if (result.error) {
     console.log('Error: ' + result.error)
-    transformChainError.value = result.error
+    transformChainError.value = result.message
     outputData.value = ''
     outputBuffer.value = null
     return
@@ -39,7 +40,7 @@ function applyTransformChain() {
   // update the suggestions
   let suggestionList = []
   for (let i = 0; i < result.suggestions.length; i++) {
-    suggestionList.push(transformManager.get(result.suggestions[i]))
+    suggestionList.push(transformManager.get(result.suggestions[i][0]))
   }
   suggestions.value = suggestionList
   console.log(suggestionList)

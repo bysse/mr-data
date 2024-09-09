@@ -15,7 +15,7 @@ function autoResize(event: any) {
       rows="1"
       @input="autoResize"
       @change="autoResize"
-      :v-model="model"
+      v-model="model"
     />
   </div>
 </template>

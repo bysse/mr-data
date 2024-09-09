@@ -1,5 +1,5 @@
 import { Buffer } from './buffer'
-import transformManager from './manager'
+import transformManager from './transform_manager'
 import { Transform } from './transform'
 
 export class TransformChainResult {
@@ -65,10 +65,8 @@ export class TransformChain {
     this.transforms.splice(index, 1)
   }
 
-  apply(value: string): TransformChainResult {
+  apply(buffer: Buffer<any>): TransformChainResult {
     console.log('TransformChain.apply')
-
-    let buffer = Buffer.fromValue(value)
 
     if (this.transforms.length === 0) {
       return TransformChainResult.success(buffer, transformManager.detect(buffer))
