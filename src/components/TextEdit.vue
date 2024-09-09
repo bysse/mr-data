@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const model = defineModel({ required: true })
+const model = defineModel<string>({ required: true })
 
 function autoResize(event: any) {
   const textarea = event.target
@@ -10,13 +10,7 @@ function autoResize(event: any) {
 
 <template>
   <div class="text-edit-container">
-    <textarea
-      class="text-edit"
-      rows="1"
-      @input="autoResize"
-      @change="autoResize"
-      v-model="model"
-    />
+    <textarea class="text-edit" rows="1" @input="autoResize" @change="autoResize" v-model="model" />
   </div>
 </template>
 
