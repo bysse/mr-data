@@ -1,10 +1,12 @@
-import { Buffer, BufferType } from './buffer.ts'
+import { Buffer, BufferType } from './buffer'
 
 export abstract class Transform {
   readonly id: string
   readonly title: string
   readonly inputType: BufferType[]
   readonly outputType: BufferType
+  decoder: TextDecoder
+  encoder: TextEncoder
 
   protected constructor(
     id: string,
@@ -21,15 +23,19 @@ export abstract class Transform {
     this.encoder = new TextEncoder()
   }
 
-  abstract detect(buffer: Buffer<any>): number;
+  public compatibleWithInput(type: BufferType): boolean {
+    return this.inputType.find(type.matches) === undefined
+  }
 
-  abstract apply(buffer: Buffer<any>): Buffer<any>;
+  abstract detect(buffer: Buffer<any>): number
+
+  abstract apply(buffer: Buffer<any>): Buffer<any>
 
   protected decode(buffer: Uint8ClampedArray): string {
     return this.decoder.decode(buffer)
   }
 
   protected encode(data: string): Uint8ClampedArray {
-    return this.encoder.encode(data)
+    return new Uint8ClampedArray(this.encoder.encode(data))
   }
 }

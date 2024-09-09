@@ -50,7 +50,7 @@ export class TransformChain {
   append(transform: Transform): void {
     if (this.transforms.length > 0) {
       const last = this.transforms[this.transforms.length - 1]
-      if (!last.outputType.matches(transform.inputType)) {
+      if (!transform.compatibleWithInput(last.outputType)) {
         throw new Error(`Transform ${transform.title} cannot be appended to the chain`)
       }
     }
@@ -75,7 +75,8 @@ export class TransformChain {
         const transform = this.transforms[i]
         buffer = transform.apply(buffer)
       } catch (e) {
-        return TransformChainResult.error(i, e.message)
+        if (e instanceof Error) return TransformChainResult.error(i, e.message)
+        return TransformChainResult.error(i, String(e))
       }
     }
 
