@@ -7,42 +7,25 @@ import TextEdit from './components/TextEdit.vue'
 import QueryString from './query'
 import { TransformManager } from './transform/transform_manager'
 
-//const inputData = ref('{"key":"value"}');
-const inputData = ref('aGVsbG8=')
-const outputData = ref('')
-const outputBuffer = ref(null)
-
 const transforms = ref([])
 const suggestions = ref<Transform[]>([])
-
-const transformChain = new TransformChain()
-const transformChainError = ref('')
 
 const queryString = new QueryString()
 const manager = new TransformManager('aGVsbG8=')
 
-const decoder = new TextDecoder()
-
 function applyTransformChain() {
-  console.log(inputData.value)
-  const result = transformChain.apply(inputData.value)
-  console.log(result)
+  const result = manager.applyTransforms()
 
   if (result.error) {
     console.log('Error: ' + result.error)
-    transformChainError.value = result.message
-    outputData.value = ''
-    outputBuffer.value = null
     return
   }
-
-  outputData.value = decoder.decode(result.buffer.data)
-  transformChainError.value = ''
 
   // update the suggestions
   let suggestionList = []
   for (let i = 0; i < result.suggestions.length; i++) {
-    suggestionList.push(transformRegistry.get(result.suggestions[i][0]))
+    const transform = transformRegistry.get(result.suggestions[i][0])
+    suggestionList.push(transform)
   }
   suggestions.value = suggestionList
   console.log(suggestionList)
