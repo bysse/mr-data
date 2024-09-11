@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Transform } from './transform/transform'
-import transformManager from './transform/transform_manager'
+import transformRegistry from './transform/transform_registry'
 import { TransformChain } from './transform/transform_chain'
 import TextEdit from './components/TextEdit.vue'
 import QueryString from './query'
+import { TransformManager } from './transform/transform_manager'
 
 //const inputData = ref('{"key":"value"}');
 const inputData = ref('aGVsbG8=')
@@ -18,6 +19,7 @@ const transformChain = new TransformChain()
 const transformChainError = ref('')
 
 const queryString = new QueryString()
+const manager = new TransformManager('aGVsbG8=')
 
 const decoder = new TextDecoder()
 
@@ -40,7 +42,7 @@ function applyTransformChain() {
   // update the suggestions
   let suggestionList = []
   for (let i = 0; i < result.suggestions.length; i++) {
-    suggestionList.push(transformManager.get(result.suggestions[i][0]))
+    suggestionList.push(transformRegistry.get(result.suggestions[i][0]))
   }
   suggestions.value = suggestionList
   console.log(suggestionList)
@@ -90,7 +92,7 @@ const chain = queryString.get('chain')
 if (chain) {
   const transformIds = chain.split('|')
   for (let i = 0; i < transformIds.length; i++) {
-    const transform = transformManager.get(transformIds[i])
+    const transform = transformRegistry.get(transformIds[i])
     if (transform) {
       transformChain.append(transform)
     }

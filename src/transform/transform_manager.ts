@@ -1,53 +1,47 @@
-import { JsonFormatTransform } from './json.js'
-import { Transform } from './transform.js'
-import { Buffer } from './buffer.js'
+import { ref, type Ref } from 'vue'
+import { TransformChain } from './transform_chain'
+import transformRegistry from './transform_registry'
+import { Something, Err, type Result } from '../lib/result'
+import { ValueBuffer } from './buffer'
 
 export class TransformManager {
-  private readonly transforms: Transform[]
+  readonly input: Ref<string, string>
+  readonly error: Ref<string, string>
+  readonly transformChain: TransformChain
 
-  constructor() {
-    this.transforms = [
-      new JsonFormatTransform()
-      /*
-      new Base64Transform(),
-
-      new JWTDecodeTransform(),
-
-      new ArrayLengthTransform()
-       */
-    ]
+  constructor(initialData: string) {
+    this.input = ref<string>(initialData)
+    this.error = ref<string>('')
+    this.transformChain = new TransformChain()
   }
 
-  all(): Transform[] {
-    return this.transforms
-  }
-
-  get(id: string): Transform | undefined {
-    return this.transforms.find((transform) => transform.id === id)
-  }
-
-  detect(buffer: Buffer<any>): [string, number][] {
-    if (buffer == null || buffer.data == null) {
-      return []
+  appendTransform(transformId: string): Result<void, string> {
+    const transform = transformRegistry.get(transformId)
+    if (transform === undefined) {
+      return this.setError(`Unknown transform "${transformId}"`)
     }
-
-    const result: [string, number][] = []
-    for (let i = 0; i < this.transforms.length; i++) {
-      const transform = this.transforms[i]
-      if (!buffer.type.matchesAny(transform.inputType)) {
-        continue
-      }
-
-      const score = transform.detect(buffer)
-      if (score <= 0) continue
-      result.push([transform.id, score])
+    try {
+      this.transformChain.append(transform)
+      this.clearError()
+      return Something.create()
+    } catch (e) {
+      return this.setError((e as Error).message)
     }
+  }
 
-    result.sort((a, b) => b[1] - a[1])
-    return result
+  public applyTransforms(): Result<string, string> {
+    const buffer = new ValueBuffer(this.input.value)
+    const result: TransformChainResult = this.transformChain.apply(buffer)
+
+    // TODO:
+  }
+
+  private clearError() {
+    this.error.value = ''
+  }
+
+  private setError<T>(message: string): Result<T, string> {
+    this.error.value = message
+    return Err.create(message)
   }
 }
-
-const transformManager = new TransformManager()
-
-export default transformManager

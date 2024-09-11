@@ -1,5 +1,4 @@
 import {
-  BasicType,
   DataType,
   TYPE_BINARY,
   TYPE_BINARY_ARRAY,

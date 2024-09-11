@@ -1,5 +1,5 @@
 import { Buffer } from './buffer'
-import transformManager from './transform_manager'
+import transformRegistry from './transform_registry'
 import { Transform } from './transform'
 
 export class TransformChainResult {
@@ -55,13 +55,16 @@ export class TransformChain {
     if (this.transforms.length > 0) {
       const last = this.transforms[this.transforms.length - 1]
       if (!transform.compatibleWithInput(last.outputType)) {
-        throw new Error(`Transform ${transform.title} cannot be appended to the chain`)
+        throw new Error(
+          `Incompatible types: ${last.outputType} cannot be converted to ${transform.inputType}`
+        )
       }
     }
     this.transforms.push(transform)
   }
 
   removeByIndex(index: number): void {
+    // TODO: This could break the type chain. Remove all transforms after?
     this.transforms.splice(index, 1)
   }
 
@@ -69,7 +72,7 @@ export class TransformChain {
     console.log('TransformChain.apply')
 
     if (this.transforms.length === 0) {
-      return TransformChainResult.success(buffer, transformManager.detect(buffer))
+      return TransformChainResult.success(buffer, transformRegistry.detect(buffer))
     }
 
     for (let i = 0; i < this.transforms.length; i++) {
@@ -82,6 +85,6 @@ export class TransformChain {
       }
     }
 
-    return TransformChainResult.success(buffer, transformManager.detect(buffer))
+    return TransformChainResult.success(buffer, transformRegistry.detect(buffer))
   }
 }
