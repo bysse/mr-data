@@ -3,18 +3,27 @@ import { TransformChain, TransformChainResult } from './transform_chain'
 import transformRegistry from './transform_registry'
 import { Something, Err, type Result } from '../lib/result'
 import { ValueBuffer } from './buffer'
+import QueryString from '../query'
 
 export class TransformManager {
   readonly input: Ref<string, string>
   readonly output: Ref<string, string>
   readonly error: Ref<string, string>
-  readonly transformChain: TransformChain
+  // TODO: Add a ref for the transform view data
+
+  readonly transformChain = new TransformChain()
+  readonly queryString = new QueryString()
 
   constructor(initialData: string) {
     this.input = ref<string>(initialData)
     this.output = ref<string>('')
     this.error = ref<string>('')
-    this.transformChain = new TransformChain()
+
+    // load any initial transform chain from the query string
+    const chain = this.queryString.get('chain')
+    if (chain) {
+      chain.split('|').forEach(this.appendTransform)
+    }
   }
 
   appendTransform(transformId: string): Result<void, string> {
@@ -24,6 +33,18 @@ export class TransformManager {
     }
     try {
       this.transformChain.append(transform)
+      this.updateQueryString()
+      this.clearError()
+      return Something.create()
+    } catch (e) {
+      return this.setError((e as Error).message)
+    }
+  }
+
+  removeTransform(transformIndex: number): Result<void, string> {
+    try {
+      this.transformChain.removeByIndex(transformIndex)
+      this.updateQueryString()
       this.clearError()
       return Something.create()
     } catch (e) {
@@ -46,11 +67,27 @@ export class TransformManager {
     return result
   }
 
+  private updateQueryString() {
+    if (this.transformChain.isEmpty()) {
+      this.queryString.remove('chain')
+    } else {
+      this.queryString.set(
+        'chain',
+        this.transformChain
+          .all()
+          .map((transform) => transform.id)
+          .join('|')
+      )
+    }
+    this.queryString.apply()
+  }
+
   private clearError() {
     this.error.value = ''
   }
 
   private setError<T>(message: string): Result<T, string> {
+    console.log('ERROR: ' + message)
     this.error.value = message
     return Err.create(message)
   }
