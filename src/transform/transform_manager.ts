@@ -1,7 +1,6 @@
 import { ref, type Ref } from 'vue'
 import { TransformChain, TransformChainResult } from './transform_chain'
 import transformRegistry from './transform_registry'
-import { Something, Err, type Result } from '../lib/result'
 import { ValueBuffer } from './buffer'
 import QueryString from '../query'
 
@@ -26,7 +25,7 @@ export class TransformManager {
     }
   }
 
-  appendTransform(transformId: string): Result<void, string> {
+  appendTransform(transformId: string): boolean {
     const transform = transformRegistry.get(transformId)
     if (transform === undefined) {
       return this.setError(`Unknown transform "${transformId}"`)
@@ -35,18 +34,18 @@ export class TransformManager {
       this.transformChain.append(transform)
       this.updateQueryString()
       this.clearError()
-      return Something.create()
+      return true
     } catch (e) {
       return this.setError((e as Error).message)
     }
   }
 
-  removeTransform(transformIndex: number): Result<void, string> {
+  removeTransform(transformIndex: number): boolean {
     try {
       this.transformChain.removeByIndex(transformIndex)
       this.updateQueryString()
       this.clearError()
-      return Something.create()
+      return true
     } catch (e) {
       return this.setError((e as Error).message)
     }
@@ -86,9 +85,9 @@ export class TransformManager {
     this.error.value = ''
   }
 
-  private setError<T>(message: string): Result<T, string> {
+  private setError<T>(message: string): boolean {
     console.log('ERROR: ' + message)
     this.error.value = message
-    return Err.create(message)
+    return false
   }
 }
