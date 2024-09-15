@@ -6,10 +6,10 @@ export default class QueryString {
   }
 
   static parse(queryString: string): Map<string, string> {
-    let map = new Map<string, string>()
+    const map = new Map<string, string>()
 
     const pairs = queryString.split('&')
-    pairs.forEach(pair => {
+    pairs.forEach((pair) => {
       const [key, value] = pair.split('=')
       map.set(key, value)
     })
@@ -17,13 +17,16 @@ export default class QueryString {
   }
 
   static stringify(map: Map<string, string>): string {
-    return map.entries()
-      .map(entry => `${entry[0]}=${entry[1]}`)
-      .join('&')
+    const kv: string[] = []
+    for (const entry of map.entries()) {
+      kv.push(`${entry[0]}=${entry[1]}`)
+    }
+
+    return kv.join('&')
   }
 
   get(key: string) {
-    return this.map.get(key);
+    return this.map.get(key)
   }
 
   set(key: string, value: string) {

@@ -3,6 +3,8 @@ import { TransformChain, TransformChainResult } from './transform_chain'
 import transformRegistry from './transform_registry'
 import { ValueBuffer } from './buffer'
 import QueryString from '../query'
+import { proxy } from '../lib/proxy'
+import type { Transform } from './transform'
 
 export class TransformManager {
   readonly input: Ref<string, string>
@@ -21,15 +23,27 @@ export class TransformManager {
     // load any initial transform chain from the query string
     const chain = this.queryString.get('chain')
     if (chain) {
-      chain.split('|').forEach(this.appendTransform)
+      chain.split('|').forEach(this.appendTransformById)
     }
   }
 
-  appendTransform(transformId: string): boolean {
+  getInput(): Ref<string, string> {
+    return proxy(this.input)
+  }
+
+  getOutput(): Ref<string, string> {
+    return proxy(this.output)
+  }
+
+  appendTransformById(transformId: string): boolean {
     const transform = transformRegistry.get(transformId)
     if (transform === undefined) {
       return this.setError(`Unknown transform "${transformId}"`)
     }
+    return this.appendTransform(transform)
+  }
+
+  appendTransform(transform: Transform): boolean {
     try {
       this.transformChain.append(transform)
       this.updateQueryString()

@@ -21,8 +21,8 @@ export class JsonFormatTransform extends Transform {
     if (buffer.type.matches(TYPE_VALUE)) {
       const data = buffer.data as string
       if (data.length > 1) {
-        const first = data.at(0)
-        const last = data.at(data.length - 1)
+        const first = data.charAt(0)
+        const last = data.charAt(data.length - 1)
 
         if (
           (first === '{' && last === '}') ||
@@ -37,8 +37,8 @@ export class JsonFormatTransform extends Transform {
     if (buffer.type.matches(TYPE_BINARY)) {
       const data = buffer.data as Uint8ClampedArray
       if (data.length > 1) {
-        const first = data.at(0)
-        const last = data.at(data.length - 1)
+        const first = data[0]
+        const last = data[data.length - 1]
 
         if (
           (first === leftBrace && last === rightBrace) ||

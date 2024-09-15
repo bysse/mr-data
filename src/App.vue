@@ -5,10 +5,12 @@ import transformRegistry from './transform/transform_registry'
 import TextEdit from './components/TextEdit.vue'
 import { TransformManager } from './transform/transform_manager'
 
-const transforms = ref([])
 const suggestions = ref<Transform[]>([])
 
 const manager = new TransformManager('aGVsbG8=')
+const input = manager.getInput()
+const output = manager.getOutput()
+const transforms = ref<Transform[]>([])
 
 function apply() {
   const result = manager.applyTransforms()
@@ -29,8 +31,9 @@ function apply() {
   console.log(suggestionList)
 }
 
-function appendTransform(transformId: string) {
-  if (manager.appendTransform(transformId)) {
+function appendTransform(transform: Transform) {
+  if (manager.appendTransform(transform)) {
+    transforms.value = manager.transformChain.all()
     apply()
   }
 }
@@ -38,6 +41,7 @@ function appendTransform(transformId: string) {
 function removeTransform(index: number) {
   console.log('Removing transform at index: ' + index)
   if (manager.removeTransform(index)) {
+    transforms.value = manager.transformChain.all()
     apply()
   }
 }
@@ -51,7 +55,7 @@ apply()
       <div class="section">
         <h2>Encoded</h2>
 
-        <TextEdit v-model="manager.input" @on-change="apply" />
+        <TextEdit v-model="input" @on-change="apply" />
       </div>
 
       <div class="section">
@@ -64,7 +68,11 @@ apply()
         <div v-if="suggestions.length > 0">
           <h3>Suggestions</h3>
           <ul>
-            <li v-for="suggestion in suggestions" @click="appendTransform(suggestion)">
+            <li
+              v-for="(suggestion, index) in suggestions"
+              :key="index"
+              @click="appendTransform(suggestion)"
+            >
               {{ suggestion.title }}
             </li>
           </ul>
@@ -74,7 +82,7 @@ apply()
       <div class="section">
         <h2>Decoded</h2>
 
-        <TextEdit v-model="manager.output" :tab-size="2" />
+        <TextEdit v-model="output" :tab-size="2" />
       </div>
     </div>
   </main>
