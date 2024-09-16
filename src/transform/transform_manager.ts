@@ -66,6 +66,7 @@ export class TransformManager {
   }
 
   public applyTransforms(): TransformChainResult {
+    console.log('TransformManager::applyTransforms')
     const buffer = new ValueBuffer(this.input.value)
     const result = this.transformChain.apply(buffer)
 

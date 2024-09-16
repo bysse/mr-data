@@ -1,16 +1,16 @@
 import { JsonFormatTransform } from './json.js'
 import { Transform } from './transform.js'
 import { Buffer } from './buffer.js'
+import Base64Transform from './base64.js'
 
 export class TransformRegistry {
   private readonly transforms: Transform[]
 
   constructor() {
     this.transforms = [
-      new JsonFormatTransform()
+      new JsonFormatTransform(),
+      new Base64Transform()
       /*
-      new Base64Transform(),
-
       new JWTDecodeTransform(),
 
       new ArrayLengthTransform()

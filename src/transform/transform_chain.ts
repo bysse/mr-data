@@ -69,7 +69,7 @@ export class TransformChain {
   }
 
   apply(buffer: Buffer<any>): TransformChainResult {
-    console.log('TransformChain.apply')
+    console.log('TransformChain::apply')
 
     if (this.transforms.length === 0) {
       return TransformChainResult.success(buffer, transformRegistry.detect(buffer))
