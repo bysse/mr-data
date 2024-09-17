@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { Transform } from './transform/transform'
 import transformRegistry from './transform/transform_registry'
 import TextEdit from './components/TextEdit.vue'
@@ -8,6 +8,7 @@ import { TransformManager } from './transform/transform_manager'
 const suggestions = ref<Transform[]>([])
 
 const manager = new TransformManager('aGVsbG8=')
+
 const input = manager.getInput()
 const output = manager.getOutput()
 const transforms = ref<Transform[]>([])
@@ -45,6 +46,8 @@ function removeTransform(index: number) {
     apply()
   }
 }
+
+watch(input, () => apply())
 
 apply()
 </script>

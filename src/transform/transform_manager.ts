@@ -23,7 +23,7 @@ export class TransformManager {
     // load any initial transform chain from the query string
     const chain = this.queryString.get('chain')
     if (chain) {
-      chain.split('|').forEach(this.appendTransformById)
+      chain.split('|').forEach((transformId) => this.appendTransformById(transformId))
     }
   }
 
