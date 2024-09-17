@@ -13,6 +13,9 @@ const input = manager.getInput()
 const output = manager.getOutput()
 const transforms = ref<Transform[]>([])
 
+// load initial transform
+transforms.value = manager.transformChain.all()
+
 function apply() {
   const result = manager.applyTransforms()
 
