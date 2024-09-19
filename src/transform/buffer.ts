@@ -11,10 +11,12 @@ import {
 export class Buffer<T> {
   public readonly data: T
   public readonly type: DataType
+  public readonly annotations: string[]
 
-  constructor(data: T, type: DataType) {
+  constructor(data: T, type: DataType, annotations: string[]) {
     this.data = data
     this.type = type
+    this.annotations = annotations
   }
 
   public toString(): string {
@@ -23,20 +25,20 @@ export class Buffer<T> {
 }
 
 export class ValueBuffer extends Buffer<string> {
-  constructor(data: string) {
-    super(data, TYPE_VALUE)
+  constructor(data: string, annotation: string) {
+    super(data, TYPE_VALUE, [annotation])
   }
 }
 
 export class JsonBuffer extends Buffer<string> {
-  constructor(data: string) {
-    super(data, TYPE_JSON)
+  constructor(data: string, annotation: string) {
+    super(data, TYPE_JSON, [annotation])
   }
 }
 
 export class BinaryBuffer extends Buffer<Uint8ClampedArray> {
-  constructor(data: Uint8ClampedArray) {
-    super(data, TYPE_BINARY)
+  constructor(data: Uint8ClampedArray, ...annotations: string[]) {
+    super(data, TYPE_BINARY, annotations)
   }
 
   public toString(): string {
@@ -44,9 +46,23 @@ export class BinaryBuffer extends Buffer<Uint8ClampedArray> {
   }
 }
 
-export class ValueArrayBuffer extends Buffer<string[]> {
-  constructor(data: string[]) {
-    super(data, TYPE_VALUE_ARRAY)
+export class ArrayBuffer<T> extends Buffer<Array<T>> {
+  constructor(data: Array<T>, type: DataType, annotations: string[]) {
+    super(data, type, annotations)
+
+    if (data.length != annotations.length) {
+      throw new Error('Mismatching number of data elements and annotations')
+    }
+  }
+
+  public toString(): string {
+    return String(this.data)
+  }
+}
+
+export class ValueArrayBuffer extends ArrayBuffer<string> {
+  constructor(data: string[], ...annotations: string[]) {
+    super(data, TYPE_VALUE_ARRAY, annotations)
   }
 
   public toString(): string {
@@ -54,9 +70,9 @@ export class ValueArrayBuffer extends Buffer<string[]> {
   }
 }
 
-export class JsonArrayBuffer extends Buffer<string[]> {
-  constructor(data: string[]) {
-    super(data, TYPE_JSON_ARRAY)
+export class JsonArrayBuffer extends ArrayBuffer<string> {
+  constructor(data: string[], ...annotations: string[]) {
+    super(data, TYPE_JSON_ARRAY, annotations)
   }
 
   public toString(): string {
@@ -64,9 +80,9 @@ export class JsonArrayBuffer extends Buffer<string[]> {
   }
 }
 
-export class BinaryArrayBuffer extends Buffer<Uint8ClampedArray[]> {
-  constructor(data: Uint8ClampedArray[]) {
-    super(data, TYPE_BINARY_ARRAY)
+export class BinaryArrayBuffer extends ArrayBuffer<Uint8ClampedArray> {
+  constructor(data: Uint8ClampedArray[], ...annotations: string[]) {
+    super(data, TYPE_BINARY_ARRAY, annotations)
   }
 
   public toString(): string {
