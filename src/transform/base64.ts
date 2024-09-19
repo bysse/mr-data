@@ -23,6 +23,6 @@ export default class Base64Transform extends Transform {
     const obj = atob(data)
 
     // TODO: this could be binary
-    return new ValueBuffer(obj)
+    return new ValueBuffer(obj, 'Decoded')
   }
 }

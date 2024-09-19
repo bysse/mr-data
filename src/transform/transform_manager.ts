@@ -1,14 +1,16 @@
 import { ref, type Ref } from 'vue'
 import { TransformChain, TransformChainResult } from './transform_chain'
 import transformRegistry from './transform_registry'
-import { ValueBuffer } from './buffer'
+import { Buffer, ValueBuffer } from './buffer'
 import QueryString from '../query'
 import { proxy } from '../lib/proxy'
 import type { Transform } from './transform'
 
 export class TransformManager {
+  private readonly emptyBuffer = new ValueBuffer('', 'Empty')
+
   readonly input: Ref<string, string>
-  readonly output: Ref<string, string>
+  readonly output: Ref<Buffer<any>, Buffer<any>>
   readonly error: Ref<string, string>
   // TODO: Add a ref for the transform view data
 
@@ -17,7 +19,7 @@ export class TransformManager {
 
   constructor(initialData: string) {
     this.input = ref<string>(initialData)
-    this.output = ref<string>('')
+    this.output = ref<Buffer<any>>(this.emptyBuffer)
     this.error = ref<string>('')
 
     // load any initial transform chain from the query string
@@ -31,7 +33,7 @@ export class TransformManager {
     return proxy(this.input)
   }
 
-  getOutput(): Ref<string, string> {
+  getOutput(): Ref<Buffer<any>, Buffer<any>> {
     return proxy(this.output)
   }
 
@@ -67,15 +69,15 @@ export class TransformManager {
 
   public applyTransforms(): TransformChainResult {
     console.log('TransformManager::applyTransforms')
-    const buffer = new ValueBuffer(this.input.value)
+    const buffer = new ValueBuffer(this.input.value, 'Input')
     const result = this.transformChain.apply(buffer)
 
     if (result.error) {
-      this.output.value = ''
+      this.output.value = new ValueBuffer(result.message, 'Error')
       this.error.value = result.message
     } else {
       this.clearError()
-      this.output.value = result.buffer?.toString() || ''
+      this.output.value = result.buffer ?? this.emptyBuffer
     }
 
     return result

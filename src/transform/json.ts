@@ -1,8 +1,9 @@
 import { TYPE_BINARY, TYPE_JSON, TYPE_VALUE } from './type'
 import { Buffer, JsonBuffer } from './buffer'
 import { Transform } from './transform'
+import { formatJson } from './util'
 
-export class JsonFormatTransform extends Transform {
+export default class JsonFormatTransform extends Transform {
   constructor() {
     super('json.format', 'JSON Format', [TYPE_VALUE, TYPE_JSON, TYPE_BINARY], TYPE_JSON)
   }
@@ -59,13 +60,12 @@ export class JsonFormatTransform extends Transform {
       const obj = JSON.parse(decodedString)
       const json = JSON.stringify(obj, null, 3)
 
-      return new JsonBuffer(json)
+      return new JsonBuffer(json, 'JSON')
     }
 
     const decodedString = buffer.toString()
-    const obj = JSON.parse(decodedString)
-    const json = JSON.stringify(obj, null, 3)
+    const json = formatJson(decodedString)
 
-    return new JsonBuffer(json)
+    return new JsonBuffer(json, 'JSON')
   }
 }

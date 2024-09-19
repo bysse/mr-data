@@ -19,6 +19,10 @@ export class Buffer<T> {
     this.annotations = annotations
   }
 
+  public sections(): [string, string][] {
+    return [[this.toString(), this.annotations[0]]]
+  }
+
   public toString(): string {
     return String(this.data)
   }
@@ -53,6 +57,14 @@ export class ArrayBuffer<T> extends Buffer<Array<T>> {
     if (data.length != annotations.length) {
       throw new Error('Mismatching number of data elements and annotations')
     }
+  }
+
+  public sections(): [string, string][] {
+    const list: [string, string][] = []
+    for (let i = 0; i < this.data.length; i++) {
+      list.push([this.data[i] + '', this.annotations[i]])
+    }
+    return list
   }
 
   public toString(): string {

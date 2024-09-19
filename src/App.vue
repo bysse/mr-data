@@ -4,10 +4,14 @@ import { Transform } from './transform/transform'
 import transformRegistry from './transform/transform_registry'
 import TextEdit from './components/TextEdit.vue'
 import { TransformManager } from './transform/transform_manager'
+import OutputSections from './components/OutputSections.vue'
 
 const suggestions = ref<Transform[]>([])
 
-const manager = new TransformManager('aGVsbG8=')
+const data =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+//const data = 'aGVsbG8='
+const manager = new TransformManager(data)
 
 const input = manager.getInput()
 const output = manager.getOutput()
@@ -86,9 +90,9 @@ apply()
       </div>
 
       <div class="section">
-        <h2>Decoded</h2>
+        <h2>Output</h2>
 
-        <TextEdit v-model="output" :tab-size="2" />
+        <OutputSections :buffer="output" />
       </div>
     </div>
   </main>
