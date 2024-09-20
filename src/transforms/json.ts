@@ -1,6 +1,6 @@
-import { TYPE_BINARY, TYPE_JSON, TYPE_VALUE } from './type'
-import { Buffer, JsonBuffer } from './buffer'
-import { Transform } from './transform'
+import { TYPE_BINARY, TYPE_JSON, TYPE_VALUE } from '../transform/type'
+import { Buffer, JsonBuffer } from '../transform/buffer'
+import { Transform } from '../transform/transform'
 import { formatJson } from './util'
 
 export default class JsonFormatTransform extends Transform {

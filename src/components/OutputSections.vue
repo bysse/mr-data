@@ -10,7 +10,7 @@ const props = defineProps({
 <template>
   <div class="output-section-container">
     <div v-for="(section, index) in props.buffer.sections()" :key="index + section[1]">
-      <Section :title="section[1]" :value="section[0]" />
+      <Section :index="index" :title="section[1]" :value="section[0]" />
     </div>
   </div>
 </template>

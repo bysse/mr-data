@@ -2,6 +2,7 @@
 import { onMounted, ref, useTemplateRef } from 'vue'
 
 const props = defineProps({
+  index: { type: Number, required: true },
   title: { type: String, required: true },
   value: { type: String, required: true }
 })
@@ -20,7 +21,7 @@ onMounted(() => {
 
 <template>
   <div class="text-view-container">
-    <div>{{ props.title }}</div>
+    <div>{{ props.index }}: {{ props.title }}</div>
     <textarea ref="text" class="text-view" rows="1" v-model="model" />
   </div>
 </template>

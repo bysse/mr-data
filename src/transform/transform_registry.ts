@@ -1,9 +1,9 @@
 import { Transform } from './transform.js'
 import { Buffer } from './buffer.js'
 
-import Base64Transform from './base64.js'
-import JsonFormatTransform from './json.js'
-import JWTDecodeTransform from './jwt.js'
+import Base64Transform from '../transforms/base64.js'
+import JsonFormatTransform from '../transforms/json.js'
+import JWTDecodeTransform from '../transforms/jwt.js'
 
 export class TransformRegistry {
   private readonly transforms: Transform[]

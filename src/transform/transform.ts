@@ -1,6 +1,10 @@
 import { DataType } from './type'
 import { Buffer } from './buffer'
 
+export class Parameter {
+  readonly name: string
+}
+
 export abstract class Transform {
   readonly id: string
   readonly title: string

@@ -1,6 +1,6 @@
-import { Transform } from './transform'
-import { Buffer, ValueBuffer } from './buffer'
-import { TYPE_VALUE } from './type'
+import { Transform } from '../transform/transform'
+import { Buffer, ValueBuffer } from '../transform/buffer'
+import { TYPE_VALUE } from '../transform/type'
 
 export default class Base64Transform extends Transform {
   private regex: RegExp

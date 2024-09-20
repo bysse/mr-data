@@ -1,6 +1,6 @@
-import { Transform } from './transform'
-import { Buffer, ValueArrayBuffer } from './buffer'
-import { TYPE_VALUE } from './type'
+import { Transform } from '../transform/transform'
+import { Buffer, ValueArrayBuffer } from '../transform/buffer'
+import { TYPE_VALUE } from '../transform/type'
 import { base64URLDecode, base64URLtoBase64, formatJson } from './util'
 
 export default class JWTDecodeTransform extends Transform {
