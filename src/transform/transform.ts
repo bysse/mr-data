@@ -1,9 +1,6 @@
-import { DataType } from './type'
+import { compatibleTypes, DataType } from './type'
 import { Buffer } from './buffer'
-
-export class Parameter {
-  readonly name: string
-}
+import type { Parameter } from './parameter'
 
 export abstract class Transform {
   readonly id: string
@@ -19,8 +16,10 @@ export abstract class Transform {
   }
 
   public compatibleWithInput(type: DataType): boolean {
-    return this.inputType.find(type.matches) === undefined
+    return compatibleTypes(type, ...this.inputType)
   }
+
+  abstract parameters(): Parameter[]
 
   abstract detect(buffer: Buffer<any>): number
 

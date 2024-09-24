@@ -1,11 +1,15 @@
-import { TYPE_BINARY, TYPE_JSON, TYPE_VALUE } from '../transform/type'
+import { DataType } from '../transform/type'
 import { Buffer, JsonBuffer } from '../transform/buffer'
 import { Transform } from '../transform/transform'
-import { formatJson } from './util'
+import type { Parameter } from '../transform/parameter'
 
-export default class JsonFormatTransform extends Transform {
+export default class JsonConvertTransform extends Transform {
   constructor() {
-    super('json.format', 'JSON Format', [TYPE_VALUE, TYPE_JSON, TYPE_BINARY], TYPE_JSON)
+    super('json.convert', 'To JSON', [DataType.VALUE, DataType.BINARY], DataType.JSON)
+  }
+
+  parameters(): Parameter[] {
+    return []
   }
 
   detect(buffer: Buffer<any>): number {
@@ -15,11 +19,7 @@ export default class JsonFormatTransform extends Transform {
     const rightBracket = 93
     const quote = 34
 
-    if (buffer.type.matches(TYPE_JSON)) {
-      return 1.0
-    }
-
-    if (buffer.type.matches(TYPE_VALUE)) {
+    if (buffer.type == DataType.VALUE) {
       const data = buffer.data as string
       if (data.length > 1) {
         const first = data.charAt(0)
@@ -35,7 +35,7 @@ export default class JsonFormatTransform extends Transform {
       }
     }
 
-    if (buffer.type.matches(TYPE_BINARY)) {
+    if (buffer.type == DataType.BINARY) {
       const data = buffer.data as Uint8ClampedArray
       if (data.length > 1) {
         const first = data[0]
@@ -54,18 +54,13 @@ export default class JsonFormatTransform extends Transform {
   }
 
   apply(buffer: Buffer<any>): Buffer<any> {
-    if (buffer.type.matches(TYPE_BINARY)) {
+    if (buffer.type == DataType.BINARY) {
       const decoder = new TextDecoder()
-      const decodedString = decoder.decode(buffer.data)
-      const obj = JSON.parse(decodedString)
-      const json = JSON.stringify(obj, null, 3)
+      const json = decoder.decode(buffer.data)
 
       return new JsonBuffer(json, 'JSON')
     }
 
-    const decodedString = buffer.toString()
-    const json = formatJson(decodedString)
-
-    return new JsonBuffer(json, 'JSON')
+    return new JsonBuffer(buffer.toString(), 'JSON')
   }
 }

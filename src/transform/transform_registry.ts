@@ -1,16 +1,17 @@
-import { Transform } from './transform.js'
-import { Buffer } from './buffer.js'
+import { Transform } from './transform'
+import { Buffer } from './buffer'
 
-import Base64Transform from '../transforms/base64.js'
-import JsonFormatTransform from '../transforms/json.js'
-import JWTDecodeTransform from '../transforms/jwt.js'
+import Base64Transform from '../transforms/base64'
+import JsonConvertTransform from '../transforms/json'
+import JWTDecodeTransform from '../transforms/jwt'
+import { compatibleTypes } from './type'
 
 export class TransformRegistry {
   private readonly transforms: Transform[]
 
   constructor() {
     this.transforms = [
-      new JsonFormatTransform(),
+      new JsonConvertTransform(),
       new Base64Transform(),
       new JWTDecodeTransform()
       /*
@@ -35,7 +36,7 @@ export class TransformRegistry {
     const result: [string, number][] = []
     for (let i = 0; i < this.transforms.length; i++) {
       const transform = this.transforms[i]
-      if (!buffer.type.matchesAny(transform.inputType)) {
+      if (!compatibleTypes(buffer.type, ...transform.inputType)) {
         continue
       }
 

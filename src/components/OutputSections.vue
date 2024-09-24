@@ -8,14 +8,9 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="output-section-container">
-    <div v-for="(section, index) in props.buffer.sections()" :key="index + section[1]">
-      <Section :index="index" :title="section[1]" :value="section[0]" />
+  <div>
+    <div v-for="(section, index) in props.buffer.sections()" :key="index + section.annotation">
+      <Section :index="index" :buffer="section" />
     </div>
   </div>
 </template>
-
-<style>
-.output-section-container {
-}
-</style>
