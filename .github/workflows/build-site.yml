@@ -36,11 +36,11 @@ jobs:
       - name: Prepare output
         run: |
           git switch web
-          rsync -Ar dist/ docs/
+          rsync -Arv --delete dist/ docs/
           git add docs/
 
       - name: Commit build output
-        run: |          
+        run: |
           git commit -m "Automated build commit"
           git push --force
         env:
