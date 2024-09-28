@@ -1,4 +1,4 @@
-import { DataType, compatibleTypes } from './type'
+import { DataType, compatibleWith } from './type'
 
 export class Buffer<T> {
   public readonly data: T

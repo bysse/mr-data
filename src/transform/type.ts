@@ -13,6 +13,10 @@ export function compatibleType(lType: DataType, rType: DataType): boolean {
   )
 }
 
-export function compatibleTypes(lType: DataType, ...rTypes: DataType[]): boolean {
+export function compatibleWith(lType: DataType, ...rTypes: DataType[]): boolean {
   return rTypes.some((rType) => compatibleType(lType, rType))
+}
+
+export function compatibleWithAny(lTypes: DataType[], rTypes: DataType[]): boolean {
+  return lTypes.some((lType) => compatibleWith(lType, ...rTypes))
 }

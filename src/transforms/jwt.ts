@@ -8,7 +8,7 @@ export default class JWTDecodeTransform extends Transform {
   private regex: RegExp
 
   constructor() {
-    super('jwt.decode', 'JWT Decode', [DataType.VALUE], DataType.ARRAY)
+    super('jwt.decode', 'JWT Decode', [DataType.VALUE], [DataType.ARRAY])
     this.regex = /e[yw][A-Za-z0-9-_]+\.(?:e[yw][A-Za-z0-9-_]+)?\.[A-Za-z0-9-_]{2,}?/
   }
 

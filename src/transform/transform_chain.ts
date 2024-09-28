@@ -1,6 +1,7 @@
 import { Buffer } from './buffer'
 import transformRegistry from './transform_registry'
 import { Transform } from './transform'
+import { compatibleWithAny } from './type'
 
 export class TransformChainResult {
   readonly error: boolean
@@ -54,7 +55,7 @@ export class TransformChain {
   append(transform: Transform): void {
     if (this.transforms.length > 0) {
       const last = this.transforms[this.transforms.length - 1]
-      if (!transform.compatibleWithInput(last.outputType)) {
+      if (!compatibleWithAny(last.outputType, transform.inputType)) {
         throw new Error(
           `Incompatible types: ${last.outputType} cannot be converted to ${transform.inputType}`
         )

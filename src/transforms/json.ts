@@ -5,7 +5,7 @@ import type { Parameter } from '../transform/parameter'
 
 export default class JsonConvertTransform extends Transform {
   constructor() {
-    super('json.convert', 'To JSON', [DataType.VALUE, DataType.BINARY], DataType.JSON)
+    super('json.convert', 'To JSON', [DataType.VALUE, DataType.BINARY], [DataType.JSON])
   }
 
   parameters(): Parameter[] {
