@@ -29,7 +29,10 @@ export class ArrayElementTransform extends Transform {
   }
 
   apply(buffer: Buffer<any>): Buffer<any> {
-    const idx = parseInt(this.index.value)
+    this.maxIndex = buffer.sections().length
+    let idx = parseInt(this.index.value)
+    if (idx < 0) idx = 0
+    if (idx >= this.maxIndex) idx = this.maxIndex - 1
     return buffer.data[idx]
   }
 }

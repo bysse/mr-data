@@ -5,6 +5,7 @@ import transformRegistry from './transform/transform_registry'
 import TextEdit from './components/TextEdit.vue'
 import { TransformManager } from './transform/transform_manager'
 import OutputSections from './components/OutputSections.vue'
+import TransformSettings from './components/TransformSettings.vue'
 
 const suggestions = ref<Transform[]>([])
 
@@ -70,11 +71,15 @@ apply()
 
       <div class="section">
         <h2>Transforms</h2>
-        <ul>
-          <li v-for="(transform, index) in transforms" :key="index" @click="removeTransform(index)">
-            {{ transform.title }}
-          </li>
-        </ul>
+        <div>
+          <div v-for="(transform, index) in transforms" :key="index">
+            <TransformSettings
+              :transform="transform"
+              @remove="removeTransform(index)"
+              @updated="apply"
+            />
+          </div>
+        </div>
         <div v-if="suggestions.length > 0">
           <h3>Suggestions</h3>
           <ul>

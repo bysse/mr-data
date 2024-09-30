@@ -8,7 +8,7 @@ export class Parameter {
   readonly name: string
   readonly description: string
   readonly type: ParameterType
-  readonly value: string
+  public value: string
   readonly minValue: number
   readonly maxValue: number
 
