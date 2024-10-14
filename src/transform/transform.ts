@@ -2,14 +2,14 @@ import { DataType } from './type'
 import { Buffer } from './buffer'
 import type { Parameter } from './parameter'
 
-export abstract class Transform {
+export class Transform {
   readonly id: string
   readonly title: string
   readonly inputType: DataType[]
   readonly outputType: DataType[]
   public maxIndex: number
 
-  protected constructor(id: string, title: string, inputType: DataType[], outputType: DataType[]) {
+  constructor(id: string, title: string, inputType: DataType[], outputType: DataType[]) {
     this.id = id
     this.title = title
     this.inputType = inputType
@@ -17,11 +17,17 @@ export abstract class Transform {
     this.maxIndex = 1
   }
 
-  abstract parameters(): Parameter[]
+  parameters(): Parameter[] {
+    return []
+  }
 
-  abstract detect(buffer: Buffer<any>): number
+  detect(buffer: Buffer<any>): number {
+    return 0.0
+  }
 
-  abstract apply(buffer: Buffer<any>): Buffer<any>
+  apply(buffer: Buffer<any>): Buffer<any> {
+    return buffer
+  }
 
   public serialize(): string {
     return ''

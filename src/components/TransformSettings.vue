@@ -16,7 +16,7 @@ function emitRemove() {
   emit('remove')
 }
 
-function updateValue(param: Parameter, value: number) {
+function updateValue(param: Parameter, value: string) {
   param.value = '' + value
   emit('updated')
 }
@@ -42,7 +42,7 @@ function updateValue(param: Parameter, value: number) {
       </div>
     </div>
     <div v-if="props.transform.parameters().length > 0">
-      <div v-for="(param, index) in props.transform.parameters()" :key="param.name">
+      <div v-for="param in props.transform.parameters()" :key="param.name">
         <ParameterView
           :parameter="param"
           :max-index="props.transform.maxIndex"

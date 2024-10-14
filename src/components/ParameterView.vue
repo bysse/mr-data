@@ -7,11 +7,12 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  updated: [value: String]
+  updated: [value: string]
 }>()
 
 function updateValue(event: Event) {
-  emit('updated', event.target.value)
+  const element = <HTMLTextAreaElement>event.target
+  emit('updated', element.value)
 }
 </script>
 
