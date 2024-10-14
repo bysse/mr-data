@@ -6,6 +6,7 @@ import JsonConvertTransform from '../transforms/json'
 import JWTDecodeTransform from '../transforms/jwt'
 import { compatibleWith } from './type'
 import { ArrayElementTransform } from '../transforms/array'
+import { TimestampTransform } from '../transforms/time'
 
 export class TransformRegistry {
   private readonly transforms: Transform[]
@@ -15,6 +16,8 @@ export class TransformRegistry {
       new JsonConvertTransform(),
       new Base64Transform(),
       new JWTDecodeTransform(),
+
+      new TimestampTransform(),
 
       new ArrayElementTransform()
     ]

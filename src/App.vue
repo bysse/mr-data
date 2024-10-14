@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { Transform } from './transform/transform'
 import transformRegistry from './transform/transform_registry'
 import TextEdit from './components/TextEdit.vue'
@@ -40,6 +40,11 @@ function apply() {
   console.log(suggestionList)
 }
 
+function settingsUpdated() {
+  apply()
+  manager.updateQueryString()
+}
+
 function appendTransform(transform: Transform) {
   if (manager.appendTransform(transform)) {
     transforms.value = manager.transformChain.all()
@@ -55,7 +60,9 @@ function removeTransform(index: number) {
   }
 }
 
-watch(input, () => apply())
+onMounted(() => {
+  watch(input, () => apply())
+})
 
 apply()
 </script>
@@ -76,7 +83,7 @@ apply()
             <TransformSettings
               :transform="transform"
               @remove="removeTransform(index)"
-              @updated="apply"
+              @updated="settingsUpdated"
             />
           </div>
         </div>

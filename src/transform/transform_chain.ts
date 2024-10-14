@@ -48,6 +48,13 @@ export class TransformChain {
     return this.transforms
   }
 
+  last(): Transform {
+    if (this.transforms.length === 0) {
+      throw new Error('No transforms in chain')
+    }
+    return this.transforms[this.transforms.length - 1]
+  }
+
   clear(): void {
     this.transforms = []
   }

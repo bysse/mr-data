@@ -22,4 +22,11 @@ export abstract class Transform {
   abstract detect(buffer: Buffer<any>): number
 
   abstract apply(buffer: Buffer<any>): Buffer<any>
+
+  public serialize(): string {
+    return ''
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  deserialize(value: string): void {}
 }

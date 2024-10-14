@@ -35,4 +35,12 @@ export class ArrayElementTransform extends Transform {
     if (idx >= this.maxIndex) idx = this.maxIndex - 1
     return buffer.data[idx]
   }
+
+  serialize(): string {
+    return this.index.value
+  }
+
+  deserialize(value: string): void {
+    this.index.value = value
+  }
 }

@@ -25,7 +25,29 @@ export class TransformManager {
     // load any initial transform chain from the query string
     const chain = this.queryString.get('chain')
     if (chain) {
-      chain.split('|').forEach((transformId) => this.appendTransformById(transformId))
+      const pattern = /([a-z.]+)(\((.*)\))?/i
+
+      for (const part of chain.split('|')) {
+        const match = part.match(pattern)
+        if (!match) {
+          console.log('Invalid transform specification: ' + part)
+          break
+        }
+
+        const transformId = match[1]
+        const parameters = match[3]
+
+        if (this.appendTransformById(transformId)) {
+          // the append was successful, now set the parameters
+          const transform = this.transformChain.last()
+
+          if (parameters) {
+            transform.deserialize(parameters)
+          }
+        }
+      }
+
+      this.updateQueryString()
     }
   }
 
@@ -83,7 +105,7 @@ export class TransformManager {
     return result
   }
 
-  private updateQueryString() {
+  public updateQueryString() {
     if (this.transformChain.isEmpty()) {
       this.queryString.remove('chain')
     } else {
@@ -91,7 +113,12 @@ export class TransformManager {
         'chain',
         this.transformChain
           .all()
-          .map((transform) => transform.id)
+          .map((transform) => {
+            if (transform.parameters().length === 0) {
+              return transform.id
+            }
+            return transform.id + '(' + transform.serialize() + ')'
+          })
           .join('|')
       )
     }
